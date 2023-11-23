@@ -63,6 +63,21 @@ body {
   color: #000;
 }
 
+.button-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+
 .green {
   background-color: #85bf85;
 }

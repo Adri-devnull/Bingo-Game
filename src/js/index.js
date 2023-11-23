@@ -2,39 +2,52 @@
 const cardUserBingoElement = document.getElementById('user-card-bingo');
 const cardPcBingoElement = document.getElementById('pc-card-bingo');
 const numbersBingoElement = document.getElementById('numbers-bingo');
+const buttonStartElement = document.getElementById('button');
+
+// ARRAY CON LOS 99 NUMEROS DEL BINGO
+const numbersToPlay = Array(99)
+    .fill()
+    .map((_, index) => index + 1);
 
 // FUNCION PARA GENERAR NUMEROS ALEATORIOS DEL 1 AL 99
 const generateRandomNumbers = () => {
-    return Math.floor(Math.random() * 99) + 1;
+    return Math.floor(Math.random() * numbersToPlay.length);
 }
 
-// FUNCION PARA PINTAR NUMEROS EN LA CARD DEL BINGO
-let numbers = 0;
+// FUNCION PARA CREAR 15 NUMEROS ALEATORIOS
+const generateCardBingoNumbers = () => {
+    const arrNumbers = [];
+    while (arrNumbers.length < 15) {
+        const number = generateRandomNumbers();
+        if (!arrNumbers.includes(number)) {
+            arrNumbers.push(number)
+        }
+    }
+    return arrNumbers
+}
+
+// FUNCION PARA PINTAR LOS NUMEROS EN LOS CARTONES DEL BINGO
 const printCardBingo = (card) => {
     const fragment = document.createDocumentFragment();
-    while (numbers < 15) {
+    const cardNumbers = generateCardBingoNumbers();
+    for (let i = 0; i < cardNumbers.length; i++) {
         const cell = document.createElement('span');
         cell.classList.add('cell');
-        cell.dataset.id = generateRandomNumbers();
-        cell.textContent = cell.dataset.id;
+        cell.dataset.id = cardNumbers[i] + 1;
+        cell.textContent = cardNumbers[i] + 1;
         fragment.append(cell)
-        numbers++
     }
     card.append(fragment);
-    numbers = 0;
 }
 
-// ARRAY CON LOS 99 NUMEROS DEL BINGO
-const numbersToPlay = Array(100)
-    .fill()
-    .map((_, index) => index);
 
-// FUNCION PARA PINTAR NUMEROS DEL BINGO
+// FUNCION PARA PINTAR LOS NUMEROS DEL BINGO
 const printBingoNumbers = () => {
     const fragment = document.createDocumentFragment();
-    for (let i = 1; i < numbersToPlay.length; i++) {
+    for (let i = 1; i <= numbersToPlay.length; i++) {
         const cell = document.createElement('span');
         cell.classList.add('cell');
+        cell.dataset.id = i;
         cell.textContent = i;
         fragment.append(cell);
     }
@@ -43,46 +56,52 @@ const printBingoNumbers = () => {
     printCardBingo(cardPcBingoElement);
 };
 
-// LLAMAMOS A LA FUNCION PARA PINTAR LOS NUMEROS DEL BINGO Y DE LOS CARTONES
+// LLAMAMOS A LA FUNCION PARA PINTAR EN PANTALLA LOS CARTONES Y LOS NUMEROS DEL BINGO
 printBingoNumbers();
 
-let cardBingo = 0;
-const bingoRandomNumber = () => {
-    while (cardBingo < 15) {
-        const randomNumber = generateRandomNumbers();
-        const number = numbersToPlay[randomNumber];
-        const bingoNumbers = numbersBingoElement.getElementsByTagName('span');
-        // const spansUser = cardUserBingoElement.getElementsByTagName('span');
 
-        if (bingoNumbers[number].textContent) {
-            bingoNumbers[number].classList.add('orange')
+// FUNCION PARA COMPLETAR LOS NUMEROS DEL BINGO Y LOS CARTONES 
+let cardUserBingo = 0;
+let cardPcBingo = 0;
+const bingoRandomNumber = () => {
+    const randomPosition = generateRandomNumbers();
+    const number = numbersToPlay[randomPosition];
+
+    const userNumber = cardUserBingoElement.querySelector(`span[data-id ='${number}']`);
+    const pcNumber = cardPcBingoElement.querySelector(`span[data-id ='${number}']`);
+    const bingoNumber = numbersBingoElement.querySelector(`span[data-id ='${number}']`);
+
+
+    if (bingoNumber) {
+        numbersToPlay.splice(randomPosition, 1)
+        bingoNumber.classList.add('orange');
+        if (pcNumber && bingoNumber.dataset.id === pcNumber.dataset.id) {
+            pcNumber.classList.add('red');
+            cardPcBingo++
         }
-        cardBingo++
+        if (userNumber && bingoNumber.dataset.id === userNumber.dataset.id) {
+            userNumber.classList.add('green');
+            cardUserBingo++
+        } else {
+            console.log('El numero no esta en los cartones');
+        }
     }
 }
 
-bingoRandomNumber();
+// LLAMAR AL INTERVALO QUE LLAMA A LA FUNCION PARA PINTAR LOS NUMEROS DEL BINGO Y DE LOS CARTONES
+const callInterval = () => {
+    const intervalId = setInterval(() => {
+        bingoRandomNumber()
+        if (cardUserBingo === 15 || cardPcBingo === 15) {
+            clearInterval(intervalId)
+            console.log('BINGO COMPLETADO!');
+        }
+    }, 100)
+}
 
 
+// EVENTO DE ESCUCHA PARA INICIAR LA PARTIDA
+buttonStartElement.addEventListener('click', () => {
+    callInterval();
+})
 
-// // ARRAY CON LOS NUMEROS DEL CARTON DEL USUARIO Y DEL PC
-// const userNumbers = [];
-// const pcNumbers = [];
-
-// // FUNCION PARA OBTENER LOS NUMEROS DEL CARTON DEL USUARIO Y DEL PC
-// const cardContainBingoNumber = () => {
-//     const boxSpansUser = document.getElementById('user-card-bingo');
-//     const spansUser = boxSpansUser.getElementsByTagName('span');
-//     const boxSpansPc = document.getElementById('pc-card-bingo');
-//     const spansPc = boxSpansPc.getElementsByTagName('span');
-//     for (let i = 0; i < spansUser.length; i++) {
-//         userNumbers.push(spansUser[i].textContent);
-//     }
-//     for (let i = 0; i < spansPc.length; i++) {
-//         pcNumbers.push(spansPc[i].textContent);
-//     }
-// }
-
-// cardContainBingoNumber();
-// console.log(userNumbers);
-// console.log(pcNumbers);
