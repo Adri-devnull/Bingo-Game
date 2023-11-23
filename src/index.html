@@ -13,11 +13,19 @@
 <body>
   <h1>BINGO</h1>
   <div class="boardgame" id="boardgame">
-    <div class="card-bingo" id="user-card-bingo"></div>
+    <div class="cards-bingo">
+      <div class="card-bingo" id="user-card-bingo"></div>
+      <span class="winner" id="user-winner"></span>
+    </div>
     <div class="numbers-bingo" id="numbers-bingo"></div>
-    <div class="card-bingo" id="pc-card-bingo"></div>
+    <div class="cards-bingo">
+      <div class="card-bingo" id="pc-card-bingo"></div>
+      <span class="winner" id="pc-winner"></span>
+    </div>
   </div>
+  <div class="button-restart"><button class="button hide" id="button-restart">Restart</button></div>
   <div class="button-box"><button id="button" class="button">START GAME</button></div>
+  <div class="current-number" id="current-number"></div>
 
   <script type="module" src="./js/index.js"></script>
 </body>

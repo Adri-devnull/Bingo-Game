@@ -71,8 +71,9 @@ const bingoRandomNumber = () => {
     const pcNumber = cardPcBingoElement.querySelector(`span[data-id ='${number}']`);
     const bingoNumber = numbersBingoElement.querySelector(`span[data-id ='${number}']`);
 
-
+    const currentNumber = document.getElementById('current-number');
     if (bingoNumber) {
+        currentNumber.textContent = `Numero: ${bingoNumber.textContent}`
         numbersToPlay.splice(randomPosition, 1)
         bingoNumber.classList.add('orange');
         if (pcNumber && bingoNumber.dataset.id === pcNumber.dataset.id) {
@@ -82,26 +83,35 @@ const bingoRandomNumber = () => {
         if (userNumber && bingoNumber.dataset.id === userNumber.dataset.id) {
             userNumber.classList.add('green');
             cardUserBingo++
-        } else {
-            console.log('El numero no esta en los cartones');
         }
     }
 }
 
 // LLAMAR AL INTERVALO QUE LLAMA A LA FUNCION PARA PINTAR LOS NUMEROS DEL BINGO Y DE LOS CARTONES
 const callInterval = () => {
+    const userWinner = document.getElementById('user-winner');
+    const pcWinner = document.getElementById('pc-winner');
+
     const intervalId = setInterval(() => {
         bingoRandomNumber()
-        if (cardUserBingo === 15 || cardPcBingo === 15) {
-            clearInterval(intervalId)
-            console.log('BINGO COMPLETADO!');
+        if (cardUserBingo === 15) {
+            clearInterval(intervalId);
+            userWinner.classList.add('show');
+            userWinner.textContent = 'USER WINS';
+            pcWinner.textContent = 'PC LOSE';
         }
-    }, 100)
+        if (cardPcBingo === 15) {
+            clearInterval(intervalId);
+            pcWinner.classList.add('show');
+            pcWinner.textContent = 'PC WINS!';
+            userWinner.textContent = 'USER LOSE';
+        }
+    }, 300)
 }
-
 
 // EVENTO DE ESCUCHA PARA INICIAR LA PARTIDA
 buttonStartElement.addEventListener('click', () => {
+    buttonStartElement.classList.add('hide');
     callInterval();
 })
 
