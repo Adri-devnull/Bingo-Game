@@ -3,11 +3,18 @@ const cardUserBingoElement = document.getElementById('user-card-bingo');
 const cardPcBingoElement = document.getElementById('pc-card-bingo');
 const numbersBingoElement = document.getElementById('numbers-bingo');
 const buttonStartElement = document.getElementById('button');
+const buttonRestartElement = document.getElementById('button-restart');
 
+
+const fillNumbersToPlay = () => {
+    return Array(99)
+        .fill()
+        .map((_, index) => index + 1);
+
+}
 // ARRAY CON LOS 99 NUMEROS DEL BINGO
-const numbersToPlay = Array(99)
-    .fill()
-    .map((_, index) => index + 1);
+let numbersToPlay = fillNumbersToPlay();
+let intervalId;
 
 // FUNCION PARA GENERAR NUMEROS ALEATORIOS DEL 1 AL 99
 const generateRandomNumbers = () => {
@@ -57,7 +64,9 @@ const printBingoNumbers = () => {
 };
 
 // LLAMAMOS A LA FUNCION PARA PINTAR EN PANTALLA LOS CARTONES Y LOS NUMEROS DEL BINGO
+fillNumbersToPlay();
 printBingoNumbers();
+
 
 
 // FUNCION PARA COMPLETAR LOS NUMEROS DEL BINGO Y LOS CARTONES 
@@ -91,27 +100,61 @@ const bingoRandomNumber = () => {
 const callInterval = () => {
     const userWinner = document.getElementById('user-winner');
     const pcWinner = document.getElementById('pc-winner');
-
-    const intervalId = setInterval(() => {
+    if (intervalId){
+        clearInterval(intervalId);
+    }
+    intervalId = setInterval(() => {
         bingoRandomNumber()
         if (cardUserBingo === 15) {
             clearInterval(intervalId);
             userWinner.classList.add('show');
             userWinner.textContent = 'USER WINS';
             pcWinner.textContent = 'PC LOSE';
+            buttonRestartElement.classList.remove('hide');
         }
         if (cardPcBingo === 15) {
             clearInterval(intervalId);
             pcWinner.classList.add('show');
             pcWinner.textContent = 'PC WINS!';
             userWinner.textContent = 'USER LOSE';
+            buttonRestartElement.classList.remove('hide');
         }
     }, 300)
 }
+
+// FUNCION PARA REINICIAR EL JUEGO
+const restartGame = () => {
+    cardUserBingoElement.innerHTML = '';
+    cardPcBingoElement.innerHTML = '';
+    numbersBingoElement.textContent = '';
+    cardUserBingo = 0;
+    cardPcBingo = 0;
+
+    const bingoNumbers = numbersBingoElement.querySelectorAll('.cell');
+    bingoNumbers.forEach((number) => {
+        number.classList.remove('orange', 'red', 'green');
+    });
+
+    numbersToPlay = fillNumbersToPlay();
+    console.log(numbersToPlay);
+    printBingoNumbers();
+
+    const userWinner = document.getElementById('user-winner');
+    const pcWinner = document.getElementById('pc-winner');
+    userWinner.classList.add('hide');
+    pcWinner.classList.add('hide');
+
+    buttonStartElement.classList.remove('hide');
+    callInterval()
+};
 
 // EVENTO DE ESCUCHA PARA INICIAR LA PARTIDA
 buttonStartElement.addEventListener('click', () => {
     buttonStartElement.classList.add('hide');
     callInterval();
-})
+});
 
+// EVENTO DE ESCUCHA PARA REINICIAR LA PARTIDA
+buttonRestartElement.addEventListener('click', () => {
+    restartGame();
+});

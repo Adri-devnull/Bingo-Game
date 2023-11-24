@@ -29,7 +29,7 @@ h1 {
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: rgb(202, 181, 159);
+  background-color: #56432e;
 }
 
 .boardgame {
@@ -71,11 +71,17 @@ body {
 }
 
 .button {
+  background-color: #c3ac92;
   padding: 10px;
   border-radius: 10px;
   border: none;
   font-size: 1.3em;
   cursor: pointer;
+  transition: .2s;
+}
+
+.button:hover {
+  background-color: #fff;
 }
 
 .green {
